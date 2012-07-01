@@ -7,3 +7,4 @@ TestResults
 *_resharper*
 *.user
 *.suo
+dist/

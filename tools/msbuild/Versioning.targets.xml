@@ -28,7 +28,7 @@
                 ReplacementText="AssemblyFileVersion(&quot;$(Major).$(Minor).$(Patch).$(Build)&quot;)"/>
 
     <Message Text="Updating NuGet package version"/>
-    <FileUpdate Files="$(SrcDirectory)\CIAPI.nuspec"
+    <FileUpdate Files="$(SrcDirectory)\Salient.ReliableHttpClient.nuspec"
                 Regex="&lt;version&gt;(.*?)&lt;/version&gt;"
                 ReplacementText="&lt;version&gt;$(Major).$(Minor).$(Patch)$(PreRelease)&lt;/version&gt;" />
              

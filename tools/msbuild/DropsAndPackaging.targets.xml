@@ -12,12 +12,12 @@
 
   <Target Name="Package" DependsOnTargets="CreateDropDirectories;CopyMSBuildOutputToDropDirectory;CopySourceToDropDirectory;DeleteBinFilesFromSource;CopyLicenseToAllDirectories;CopyReportsToDropFolder">
     <Message Text="Packaging with NuGet" />
-    <Copy SourceFiles="$(RootDirectory)\src\CIAPI.nuspec" DestinationFolder="$(DropDirectory)"/>
-    <Exec Command='"$(NuGetEXE)" pack -sym $(DropDirectory)\CIAPI.nuspec' ContinueOnError='false' WorkingDirectory='$(DropDirectory)'/>
+    <Copy SourceFiles="$(RootDirectory)\src\Salient.ReliableHttpClient.nuspec" DestinationFolder="$(DropDirectory)"/>
+    <Exec Command='"$(NuGetEXE)" pack -sym $(DropDirectory)\Salient.ReliableHttpClient.nuspec' ContinueOnError='false' WorkingDirectory='$(DropDirectory)'/>
   </Target>
 
   <Target Name="PublishToNugetOrg" DependsOnTargets="Package">
-	    <Exec Command='"$(NuGetEXE)" push $(DropDirectory)\CIAPI.$(Major).$(Minor).$(Patch)$(PreRelease).nupkg $(NuGet_apiKey)' ContinueOnError='false' WorkingDirectory='$(DropDirectory)'/>
+	    <Exec Command='"$(NuGetEXE)" push $(DropDirectory)\Salient.ReliableHttpClient.$(Major).$(Minor).$(Patch)$(PreRelease).nupkg $(NuGet_apiKey)' ContinueOnError='false' WorkingDirectory='$(DropDirectory)'/>
   </Target>
   <Target Name="CopySourceToDropDirectory">
     <ItemGroup>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <version>1.0.0</version>
+    <authors>Sky Sanders</authors>
+    <owners>Sky Sanders</owners>
+    <licenseUrl>https://github.com/bitpusher/Salient.ReliableHttpClient/raw/master/LICENSE.txt</licenseUrl>
+    <dependencies>
+      <dependency id="Nunit" />
+      <dependency id="Newtonsoft.Json" />
+      <dependency id="Salient.ReflectiveLoggingAdapter" />
+    </dependencies>
+    <id>Salient.ReliableHttpClient</id>
+    <title>Salient.ReliableHttpClient</title>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A multipurpose .NET client for HTTP services</description>
+    <language>en-US</language>
+  </metadata>
+  <files>
+
+    <file src="..\dist\lib\Salient.ReliableHttpClient\bin\**\Salient.ReliableHttpClient.dll" target="lib\net35" />
+    <file src="..\dist\lib\Salient.ReliableHttpClient.Serializer.Newtonsoft\bin\**\Salient.ReliableHttpClient.Serializer.Newtonsoft.dll" target="lib\net35" />
+    
+    <file src="..\dist\lib\Salient.ReliableHttpClient.Phone7\bin\**\Salient.ReliableHttpClient.Phone7.dll" target="lib\sl3-wp" />
+    <file src="..\dist\lib\Salient.ReliableHttpClient.Serializer.Newtonsoft.Phone7\bin\**\Salient.ReliableHttpClient.Serializer.Newtonsoft.Phone7.dll" target="lib\sl3-wp" />
+    
+    
+    <file src="..\dist\lib\Salient.ReliableHttpClient.Silverlight\bin\**\Salient.ReliableHttpClient.Silverlight.dll" target="lib\sl4" />
+    <file src="..\dist\lib\Salient.ReliableHttpClient.Serializer.Newtonsoft.Silverlight\bin\**\Salient.ReliableHttpClient.Serializer.Newtonsoft.Silverlight.dll" target="lib\sl4" />
+    
+    
+    <file src="lib\src\**\*.cs" target="src" />
+  </files>
+</package>
