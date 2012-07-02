@@ -31,4 +31,4 @@
     
     <file src="lib\src\**\*.cs" target="src" />
   </files>
-</package>
+</package> 
