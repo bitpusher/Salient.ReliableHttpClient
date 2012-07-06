@@ -114,6 +114,7 @@ namespace Salient.ReliableHttpClient
             var sb = new StringBuilder();
             sb.AppendLine(Message);
             sb.AppendLine(InnerExceptionType);
+            sb.AppendLine(StackTrace);
             sb.AppendLine(InnerStackTrace);
             return sb.ToString();
         }

@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientFixture.cs" />
+    <Compile Include="ExceptionFixture.cs" />
     <Compile Include="IntegrationTestFixture.cs" />
     <Compile Include="SimpleDebugAppender.cs" />
     <Compile Include="LoggingFixtureBase.cs" />
