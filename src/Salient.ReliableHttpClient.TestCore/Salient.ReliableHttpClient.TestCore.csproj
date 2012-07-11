@@ -34,7 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CassiniDev4-lib">
-      <HintPath>..\packages\CassiniDev4\CassiniDev4-lib.dll</HintPath>
+      <HintPath>..\packages\Salient.CassiniDev.5.0.1\lib\net40\Release\CassiniDev4-lib.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.1.1\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Salient.ReflectiveLoggingAdapter.35, Version=3.2.0.22, Culture=neutral, PublicKeyToken=b9b5972b9f69332b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
