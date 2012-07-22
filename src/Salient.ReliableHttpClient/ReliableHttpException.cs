@@ -59,7 +59,7 @@ namespace Salient.ReliableHttpClient
         private void PopulateFrom(Exception ex)
         {
             InnerExceptionType = ex.GetType().FullName;
-            InnerStackTrace = ex.StackTrace;
+            InnerStackTrace = ex.ToString();
             if (ex is WebException)
             {
                 var wex = (WebException)ex;
