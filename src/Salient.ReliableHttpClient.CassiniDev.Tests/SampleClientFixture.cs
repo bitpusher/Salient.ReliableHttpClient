@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,7 +50,7 @@ namespace Salient.ReliableHttpClient.Tests
             string location = new ContentLocator(@"Salient.ReliableHttpClient.TestWeb").LocateContent();
             StartServer(location);
         }
-        [Test]
+        [Test,Ignore]
         public void CanPurgeAndSHutdown()
         {
             //#FIXME - not a test - just an excercise - need to expose internals so we can peek the request queue
