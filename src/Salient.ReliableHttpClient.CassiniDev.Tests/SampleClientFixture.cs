@@ -8,9 +8,13 @@ using CassiniDev;
 using NUnit.Framework;
 using Salient.ReliableHttpClient.ReferenceImplementation;
 using Salient.ReflectiveLoggingAdapter;
+using Salient.ReliableHttpClient.Serialization.Newtonsoft;
 
 namespace Salient.ReliableHttpClient.Tests
 {
+
+
+
     public class SampleClientFixture : CassiniDevServer
     {
         static readonly StringBuilder LogOutput = new StringBuilder();
@@ -23,7 +27,7 @@ namespace Salient.ReliableHttpClient.Tests
                 return output;
             }
         }
-        static SampleClientFixture ()
+        static SampleClientFixture()
         {
             //Hook up a logger for the CIAPI.CS libraries
             LogManager.CreateInnerLogger = (logName, logLevel, showLevel, showDateTime, showLogName, dateTimeFormat)
@@ -46,8 +50,28 @@ namespace Salient.ReliableHttpClient.Tests
             string location = new ContentLocator(@"Salient.ReliableHttpClient.TestWeb").LocateContent();
             StartServer(location);
         }
+        [Test]
+        public void CanPurgeAndSHutdown()
+        {
+            //#FIXME - not a test - just an excercise - need to expose internals so we can peek the request queue
+
+            string root = RootUrl.TrimEnd('/');
+            var client = new ClientBase(new Serializer());
 
 
+            for (int i = 0; i < 50; i++)
+            {
+                client.BeginRequest(RequestMethod.GET, root, "/SampleClientHandler.ashx?foo={foo}", null, new Dictionary<string, object>() { { "foo", "foo" + i } }, ContentType.TEXT, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0, ar => { }, null);
+            }
+
+            var handle = client.ShutDown();
+            if (!handle.WaitOne(20000))
+            {
+                throw new Exception("timed out");
+            }
+
+
+        }
         [Test]
         public void CanRetryFailedRequests()
         {
@@ -67,7 +91,7 @@ namespace Salient.ReliableHttpClient.Tests
                 {
 
                     exception = ex;
-                    
+
                 }
                 gate.Set();
             }, null);
@@ -76,7 +100,7 @@ namespace Salient.ReliableHttpClient.Tests
             {
                 throw new Exception("timed out");
             }
-            if(exception==null)
+            if (exception == null)
             {
                 Assert.Fail("was expecting an exception after retrying");
             }

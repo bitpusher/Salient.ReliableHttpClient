@@ -52,7 +52,7 @@ namespace Salient.ReliableHttpClient
         private readonly int _maxPendingRequests = 10;
         private readonly List<RequestInfo> _requestCache;
         private readonly IRequestFactory _requestFactory;
-        private readonly Queue<RequestInfo> _requestQueue = new Queue<RequestInfo>();
+        internal readonly Queue<RequestInfo> RequestQueue = new Queue<RequestInfo>();
         private readonly Queue<DateTimeOffset> _requestTimes = new Queue<DateTimeOffset>();
         private readonly int _throttleWindowCount = 30;
         private readonly TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(10);
@@ -85,7 +85,7 @@ namespace Salient.ReliableHttpClient
             Log.Debug("creating RequestController: " + Id);
             _requestFactory = new RequestFactory();
             _requestCache = new List<RequestInfo>();
-            _requestQueue = new Queue<RequestInfo>();
+            RequestQueue = new Queue<RequestInfo>();
             _waitHandle = new AutoResetEvent(false);
             _backgroundThread = new Thread(BackgroundProcess);
             _backgroundThread.Start();
@@ -136,12 +136,12 @@ namespace Salient.ReliableHttpClient
             {
                 if (_processingQueue) return;
                 // should i be locking on the queue? (NOTE: concurrent libs cannot be used due to SL platform)
-                if (_requestQueue.Count == 0) return;
+                if (RequestQueue.Count == 0) return;
 
                 _processingQueue = true;
 
 
-                RequestInfo request = _requestQueue.Peek();
+                RequestInfo request = RequestQueue.Peek();
 
 
                 try
@@ -207,7 +207,7 @@ namespace Salient.ReliableHttpClient
                                     // create a new httprequest for this guy
                                     request.BuildRequest(_requestFactory);
                                     //put it back in the queue. if it belongs in the cache it is already there.
-                                    _requestQueue.Enqueue(request);
+                                    RequestQueue.Enqueue(request);
                                 }
                             }, null);
 
@@ -226,7 +226,7 @@ namespace Salient.ReliableHttpClient
                     }
                     finally
                     {
-                        _requestQueue.Dequeue();
+                        RequestQueue.Dequeue();
                         _outstandingRequests++;
                         // TODO: should this really be here if there was an error that prevented dispatch?
                     }
@@ -435,7 +435,7 @@ namespace Salient.ReliableHttpClient
                                          state);
 
                     info.State = RequestItemState.Ready;
-                    _requestQueue.Enqueue(info);
+                    RequestQueue.Enqueue(info);
                 }
                 else
                 {
@@ -456,7 +456,7 @@ namespace Salient.ReliableHttpClient
 
                         info.State = RequestItemState.Ready;
                         _requestCache.Add(info);
-                        _requestQueue.Enqueue(info);
+                        RequestQueue.Enqueue(info);
                         Log.Info(string.Format("Added {1} {0} to cache", info.Uri, info.Index));
                     }
                     else
