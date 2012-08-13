@@ -23,7 +23,7 @@ namespace Salient.ReliableHttpClient
         public WaitHandle ShutDown()
         {
             _shuttingDown = true;
-            _purgeHandle = new ManualResetEvent(false);
+            _purgeHandle = new ManualResetEvent(Controller.RequestQueue.Count == 0);
             return _purgeHandle;
         }
 
