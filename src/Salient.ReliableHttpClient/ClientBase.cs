@@ -11,16 +11,42 @@ namespace Salient.ReliableHttpClient
 {
     public class ClientBase : IDisposable
     {
+        private bool _shuttingDown;
+        private ManualResetEvent _purgeHandle;
+
         protected RequestController Controller;
         private string _userAgent;
         public IJsonSerializer Serializer { get; set; }
 
         public event EventHandler<RequestCompletedEventArgs> RequestCompleted;
 
+        public WaitHandle ShutDown()
+        {
+            _shuttingDown = true;
+            _purgeHandle = new ManualResetEvent(false);
+            return _purgeHandle;
+        }
+
         void OnRequestCompleted(object sender, RequestCompletedEventArgs e)
         {
             EventHandler<RequestCompletedEventArgs> handler = RequestCompleted;
-            if (handler != null) handler(this, e);
+            try
+            {
+                if (handler != null) handler(this, e);
+            }
+            catch (Exception ex)
+            {
+
+                //log and swallow
+
+            }
+            if (_purgeHandle != null)
+            {
+                if (Controller.RequestQueue.Count == 0)
+                {
+                    _purgeHandle.Set();
+                }
+            }
         }
 
         public ClientBase(IJsonSerializer serializer)
@@ -167,6 +193,10 @@ namespace Salient.ReliableHttpClient
                                       ContentType responseContentType, TimeSpan cacheDuration, int timeout,
                                       int retryCount)
         {
+            if (_shuttingDown)
+            {
+                throw new Exception("Client is shutting down");
+            }
             if (_disposed)
             {
                 throw new ObjectDisposedException(GetType().FullName);
@@ -227,6 +257,11 @@ namespace Salient.ReliableHttpClient
             ReliableAsyncCallback callback,
             object state)
         {
+            if (_shuttingDown)
+            {
+                throw new Exception("Client is shutting down");
+            }
+
             if (_disposed)
             {
                 throw new ObjectDisposedException(GetType().FullName);
