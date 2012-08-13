@@ -46,10 +46,12 @@ namespace Salient.ReliableHttpClient
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
 
+            // TIMEOUT: all requests in ReliableHttpClient are Async - timeout does not work for async requests. \
+            // we have to accomplish this out of band
 #if !SILVERLIGHT
-            request.ReadWriteTimeout = Convert.ToInt32(RequestTimeout.TotalMilliseconds);
+            //FIXME: Need a way to timeout requests 
 #else
-            //FIXME: Need a way to timeout requests in Silverlight
+            //FIXME: Need a way to timeout requests in silverlight
 #endif
 
 

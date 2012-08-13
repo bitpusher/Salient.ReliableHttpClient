@@ -6,6 +6,22 @@ using Salient.ReliableHttpClient.Serialization;
 
 namespace Salient.ReliableHttpClient
 {
+    [Serializable]
+    public class TimeoutException : ReliableHttpException
+    {
+
+        public TimeoutException(string message, Exception ex)
+            : base(message, ex)
+        {
+        }
+        public TimeoutException(Exception ex)
+            : base(ex)
+        {
+            
+        }
+         
+
+    }
     /// <summary>
     /// NOTE: this class must be kept serializable by not populating inner exception and keeping all
     /// properties serializable
@@ -17,9 +33,15 @@ namespace Salient.ReliableHttpClient
 
         public static ReliableHttpException Create(string message, Exception exception)
         {
-
-
-            ReliableHttpException ex = new ReliableHttpException(message, exception);
+            ReliableHttpException ex;
+            if (exception.Message.Contains("The request was aborted"))
+            {
+                ex = new TimeoutException(message, exception);
+            }
+            else
+            {
+                ex = new ReliableHttpException(message, exception);
+            }
 
             return ex;
         }
@@ -33,8 +55,15 @@ namespace Salient.ReliableHttpClient
                 return (ReliableHttpException)exception;
             }
 
-            //
-            ReliableHttpException ex = new ReliableHttpException(exception);
+            ReliableHttpException ex;
+            if (exception.Message.Contains("The request was aborted"))
+            {
+                ex = new TimeoutException(exception);
+            }
+            else
+            {
+                ex = new ReliableHttpException(exception);
+            }
 
             return ex;
         }
@@ -73,9 +102,9 @@ namespace Salient.ReliableHttpClient
                             {
                                 string response = reader.ReadToEnd().Trim();
                                 ResponseText = response;
-                            }    
+                            }
                         }
-                        
+
                     }
                 }
             }

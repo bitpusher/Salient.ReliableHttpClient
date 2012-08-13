@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -20,7 +21,7 @@ namespace Salient.ReliableHttpClient
 
         public virtual void OnRequestCompleted(RequestInfoBase info)
         {
-            if(_disposed)
+            if (_disposed)
             {
                 throw new ObjectDisposedException(GetType().FullName);
             }
@@ -185,17 +186,29 @@ namespace Salient.ReliableHttpClient
                         request._headers["x-request-index"] = request.Index.ToString();
                         request.Request.Headers["x-request-index"] = request.Index.ToString();
                     }
+
+
+
                     try
                     {
                         request.Issued = DateTimeOffset.UtcNow;
+
+                        // #TODO: this is where we need to implement homegrown timeout functionality.
+
+                        var gate = new ManualResetEvent(false);
                         IAsyncResult webRequestAsyncResult = request.Request.BeginGetResponse(ar =>
                             {
+
                                 Log.Info(string.Format("Received #{0} : {1} ", request.Index, request.Uri));
 
                                 // let's try to complete the request
                                 _outstandingRequests--;
+
+                                gate.Set();
+
                                 try
                                 {
+
                                     request.CompleteRequest(ar);
                                 }
                                 catch (Exception ex)
@@ -211,6 +224,17 @@ namespace Salient.ReliableHttpClient
                                 }
                             }, null);
 
+                        new Thread(() =>
+                                       {
+                                           if (!gate.WaitOne(request.Timeout))
+                                           {
+                                               // #TODO: disassociate the HttpWebRequest from the result, abort it, complete the result with a timeout exception
+                                               Log.Error(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}", request.Index, request.Request.RequestUri, request.Timeout));
+                                               request.Request.Abort();
+                                           }
+                                       }).Start();
+
+                        // #TODO: timeouts do not apply to async HttpWebRequests so we need to implement this ourselves
 
                         //EnsureRequestWillAbortAfterTimeout(request, webRequestAsyncResult);
 
@@ -259,33 +283,38 @@ namespace Salient.ReliableHttpClient
             return false;
         }
 
-        //        private static void EnsureRequestWillAbortAfterTimeout(RequestInfo request, IAsyncResult result)
-        //        {
-        //            //TODO: How can we timeout a request for Silverlight, when calls to AsyncWaitHandle throw the following:
-        //            //   Specified method is not supported. at System.Net.Browser.OHWRAsyncResult.get_AsyncWaitHandle() 
+//        private static void EnsureRequestWillAbortAfterTimeout(RequestInfo request, IAsyncResult result)
+//        {
+//            //TODO: How can we timeout a request for Silverlight, when calls to AsyncWaitHandle throw the following:
+//            //   Specified method is not supported. at System.Net.Browser.OHWRAsyncResult.get_AsyncWaitHandle() 
 
-        //            // DAVID: i don't think that the async methods have a timeout parameter. we will need to build one into 
-        //            // it. will not be terribly clean as it will prolly have to span both the throttle and the cache. I will look into it
+//            // DAVID: i don't think that the async methods have a timeout parameter. we will need to build one into 
+//            // it. will not be terribly clean as it will prolly have to span both the throttle and the cache. I will look into it
 
 
-        //#if !SILVERLIGHT
-        //            ThreadPool.RegisterWaitForSingleObject(
-        //                waitObject: result.AsyncWaitHandle,
-        //                callBack: (state, isTimedOut) =>
-        //                              {
-        //                                  if (!isTimedOut) return;
-        //                                  if (state.GetType() != typeof(RequestInfo)) return;
+//#if !SILVERLIGHT
+//            ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, (state, isTimedOut) =>
+//                {
+//                    try
+//                    {
+//                        if (!isTimedOut) return;
+//                        if (state.GetType() != typeof(RequestInfo)) return;
 
-        //                                  var rh = (RequestInfo)state;
-        //                                  Log.Error(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}",
-        //                                                          rh.Index, rh.Request.RequestUri, rh.Request.Timeout));
-        //                                  rh.Request.Abort();
-        //                              },
-        //                state: request,
-        //                timeout: TimeSpan.FromMilliseconds(request.Request.Timeout),
-        //                executeOnlyOnce: true);
-        //#endif
-        //        }
+//                        var rh = (RequestInfo)state;
+//                        Trace.TraceError(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}",
+//                                                rh.Index, rh.Request.RequestUri, rh.Request.Timeout));
+
+
+//                        rh.Request.Abort();
+//                    }
+//                    catch (Exception ex)
+//                    {
+
+//                        Trace.TraceError("Error timing out request: {0}", ex);
+//                    }
+//                }, request, request.Request.Timeout, true);
+//#endif
+//        }
 
         private void PurgeExpiredItems()
         {
@@ -394,30 +423,30 @@ namespace Salient.ReliableHttpClient
             //Recorder.AddRequest(copy);
         }
 
-  public virtual string EndRequest(ReliableAsyncResult result)
-  {
-      if (_disposed)
-      {
-          throw new ObjectDisposedException(GetType().FullName);
-      }
-      try
-      {
+        public virtual string EndRequest(ReliableAsyncResult result)
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+            try
+            {
 
-          result.End();
-          return result.ResponseText;
-      }
+                result.End();
+                return result.ResponseText;
+            }
 #pragma warning disable 168
-      catch (ReliableHttpException ex)
+            catch (ReliableHttpException ex)
 #pragma warning restore 168
-      {
-          // this throw is simply to isolate defects in request implementations
-          throw;
-      }
-      catch (Exception ex)
-      {
-          throw new DefectException("expecting only ReliableHttpException here. See inner for details", ex);
-      }
-  }
+            {
+                // this throw is simply to isolate defects in request implementations
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new DefectException("expecting only ReliableHttpException here. See inner for details", ex);
+            }
+        }
         public Guid BeginRequest(Uri uri, RequestMethod method, string body, Dictionary<string, string> headers,
                                  ContentType requestContentType, ContentType responseContentType, TimeSpan cacheDuration,
                                  int timeout, string target, string uriTemplate, int retryCount,
@@ -492,16 +521,16 @@ namespace Salient.ReliableHttpClient
             if (disposing)
             {
                 _disposing = true;
-                
+
                 while (_backgroundThread.IsAlive)
                 {
                     Thread.Sleep(100);
                 }
-                if(_waitHandle!=null)
+                if (_waitHandle != null)
                 {
                     ((IDisposable)_waitHandle).Dispose();
                 }
-                
+
             }
 
 

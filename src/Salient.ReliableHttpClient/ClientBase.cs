@@ -105,7 +105,7 @@ namespace Salient.ReliableHttpClient
             // for inconsistencies from caller, e.g. ensure proper trailing and leading slashes
             string url = "";
             url = url + target + uriTemplate;
-            url = url.TrimEnd('/');
+            //url = url.TrimEnd('/');
             return new Uri(url);
         }
 

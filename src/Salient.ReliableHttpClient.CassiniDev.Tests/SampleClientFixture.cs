@@ -11,50 +11,44 @@ using Salient.ReflectiveLoggingAdapter;
 
 namespace Salient.ReliableHttpClient.Tests
 {
-    public class SampleClientFixture : CassiniDevServer
+    [TestFixture]
+    public class SampleClientFixture 
     {
-        static readonly StringBuilder LogOutput = new StringBuilder();
-        public static string GetLogOutput()
+         
+        //static SampleClientFixture ()
+        //{
+        //    //Hook up a logger for the CIAPI.CS libraries
+        //    LogManager.CreateInnerLogger = (logName, logLevel, showLevel, showDateTime, showLogName, dateTimeFormat)
+        //                                   =>
+        //    {
+        //        SimpleDebugAppender logger = new SimpleDebugAppender(logName, logLevel, showLevel, showDateTime, showLogName, dateTimeFormat);
+   
+        //        return logger;
+        //    };
+        //}
+        private string ContentLocation
         {
-            lock (LogOutput)
+            get
             {
-                var output = LogOutput.ToString();
-                LogOutput.Clear();
-                return output;
+                return new ContentLocator(@"Salient.ReliableHttpClient.TestWeb").LocateContent();
             }
         }
-        static SampleClientFixture ()
-        {
-            //Hook up a logger for the CIAPI.CS libraries
-            LogManager.CreateInnerLogger = (logName, logLevel, showLevel, showDateTime, showLogName, dateTimeFormat)
-                                           =>
-            {
-                SimpleDebugAppender logger = new SimpleDebugAppender(logName, logLevel, showLevel, showDateTime, showLogName, dateTimeFormat);
-                logger.LogEvent += (s, e) =>
-                {
-                    lock (LogOutput)
-                    {
-                        LogOutput.AppendLine(string.Format("{0} {1} {2}", e.Level, e.Message, e.Exception));
-                    }
-                };
-                return logger;
-            };
-        }
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            string location = new ContentLocator(@"Salient.ReliableHttpClient.TestWeb").LocateContent();
-            StartServer(location);
-        }
+        
 
 
+        /// <summary>
+        /// strange test behavior, when run alone, passes, when in batches fails.
+        /// </summary>
         [Test]
         public void CanRetryFailedRequests()
         {
+            Thread.Sleep(10000);
+            var server = new CassiniDevServer();
+            server.StartServer(ContentLocation);
 
             var gate = new AutoResetEvent(false);
 
-            var client = new SampleClient(RootUrl.TrimEnd('/'));
+            var client = new SampleClient(server.RootUrl);
             Exception exception = null;
             client.BeginGetTestClassWithException(ar =>
             {
@@ -69,6 +63,10 @@ namespace Salient.ReliableHttpClient.Tests
                     exception = ex;
                     
                 }
+                finally
+                {
+                    server.Dispose();
+                }
                 gate.Set();
             }, null);
 
@@ -80,18 +78,20 @@ namespace Salient.ReliableHttpClient.Tests
             {
                 Assert.Fail("was expecting an exception after retrying");
             }
-            var logOutput = GetLogOutput();
-
-            Assert.IsTrue(Regex.IsMatch(logOutput, "failed 3 times"));
             Console.WriteLine(exception.ToString());
+            Assert.IsTrue(Regex.IsMatch(exception.Message, "failed 3 times"));
+ 
         }
 
         [Test]
-        public void TestServer()
+        public void aTestServer()
         {
+            var server = new CassiniDevServer();
+            server.StartServer(ContentLocation);
+
             var gate = new AutoResetEvent(false);
             Exception exception = null;
-            var client = new SampleClient(RootUrl.TrimEnd('/'));
+            var client = new SampleClient(server.RootUrl);
             client.BeginGetTestClass(ar =>
                                          {
 
@@ -102,6 +102,10 @@ namespace Salient.ReliableHttpClient.Tests
                                              catch (Exception ex)
                                              {
                                                  exception = ex;
+                                             }
+                                             finally
+                                             {
+                                                 server.Dispose();
                                              }
                                              gate.Set();
                                          }, null);

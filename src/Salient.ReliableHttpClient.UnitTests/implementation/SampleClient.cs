@@ -11,18 +11,13 @@ namespace Salient.ReliableHttpClient.ReferenceImplementation
     public class SampleClient : ClientBase
     {
         private string _target;
-        public SampleClient(string target, IRequestFactory factory)
-            : base(new Serializer(), factory)
-        {
-            _target = target;
-
-        }
         public SampleClient(string target)
             : base(new Serializer())
         {
             _target = target;
 
         }
+      
 
         public void BeginGetTestClassWithException(ReliableAsyncCallback callback, object state)
         {
@@ -52,13 +47,13 @@ namespace Salient.ReliableHttpClient.ReferenceImplementation
 
         public TestClass GetTestClass()
         {
-            var result = Request(RequestMethod.GET, _target, "/SampleClientHandler.ashx",null, null, ContentType.TEXT, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0);
+            var result = Request(RequestMethod.GET, _target, "SampleClientHandler.ashx",null, null, ContentType.TEXT, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0);
             return DeserializeJson<TestClass>(result);
         }
 
         public void BeginGetTestClass(ReliableAsyncCallback callback, object state)
         {
-            BeginRequest(RequestMethod.GET, _target, "/SampleClientHandler.ashx", null, null, ContentType.TEXT, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0, callback, state);
+            BeginRequest(RequestMethod.GET, _target, "SampleClientHandler.ashx", null, null, ContentType.TEXT, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0, callback, state);
         }
 
         public TestClass EndGetTestClass(ReliableAsyncResult result)
@@ -70,7 +65,7 @@ namespace Salient.ReliableHttpClient.ReferenceImplementation
 
         public void BeginGetService1(int id, ReliableAsyncCallback callback, object state)
         {
-            BeginRequest(RequestMethod.GET, _target, "/Service1/{id}", null, new Dictionary<string, object> { { "id", id } }, ContentType.JSON, ContentType.JSON, TimeSpan.Zero, 3000, 3, callback, state);
+            BeginRequest(RequestMethod.GET, _target, "Service1/{id}", null, new Dictionary<string, object> { { "id", id } }, ContentType.JSON, ContentType.JSON, TimeSpan.Zero, 3000, 3, callback, state);
         }
 
         public SampleItem EndGetService1(ReliableAsyncResult result)
@@ -81,7 +76,7 @@ namespace Salient.ReliableHttpClient.ReferenceImplementation
 
         public void BeginListService1(ReliableAsyncCallback callback, object state)
         {
-            BeginRequest(RequestMethod.GET, _target, "/Service1", null, null, ContentType.JSON, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0, callback, state);
+            BeginRequest(RequestMethod.GET, _target, "Service1/", null, null, ContentType.JSON, ContentType.JSON, TimeSpan.FromSeconds(1), 3000, 0, callback, state);
         }
 
         public List<SampleItem> EndListService1(ReliableAsyncResult result)
@@ -91,7 +86,7 @@ namespace Salient.ReliableHttpClient.ReferenceImplementation
 
         public void BeginCreateService1(SampleItem instance, ReliableAsyncCallback callback, object state)
         {
-            BeginRequest(RequestMethod.POST, _target, "/Service1", null, new Dictionary<string, object> { { "instance", instance } }, ContentType.JSON, ContentType.JSON, TimeSpan.Zero, 3000, 0, callback, state);
+            BeginRequest(RequestMethod.POST, _target, "Service1/", null, new Dictionary<string, object> { { "instance", instance } }, ContentType.JSON, ContentType.JSON, TimeSpan.Zero, 3000, 0, callback, state);
         }
 
         public SampleItem EndCreateService1(ReliableAsyncResult result)

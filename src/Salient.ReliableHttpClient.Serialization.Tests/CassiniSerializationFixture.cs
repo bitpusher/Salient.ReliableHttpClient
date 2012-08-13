@@ -7,13 +7,14 @@ using CassiniDev;
 using NUnit.Framework;
 using Salient.ReliableHttpClient.ReferenceImplementation;
 using Salient.ReliableHttpClient.Serialization.Tests.TestTypes;
-using Salient.ReliableHttpClient.TestCore;
+
 //DataContractJsonSerializer 
 namespace Salient.ReliableHttpClient.Serialization.Tests
 {
-    public abstract class CassiniSerializationFixture : LoggingCassiniDevServer
+    public abstract class CassiniSerializationFixture :CassiniDevServer
     {
         public abstract IJsonSerializer Serializer { get; }
+
         [TestFixtureSetUp]
         public void Setup()
         {
@@ -28,7 +29,7 @@ namespace Salient.ReliableHttpClient.Serialization.Tests
         [Test]
         public void CanSerializeRecursiveTypes()
         {
-            var client = new SampleClient(RootUrl.TrimEnd('/'));
+            var client = new SampleClient(RootUrl);
             client.Serializer = Serializer;
 
             var obj = new TestTypes.RecursiveClass()
@@ -45,7 +46,7 @@ namespace Salient.ReliableHttpClient.Serialization.Tests
         [Test, Ignore("everybody crashes hard on this, as expected.")]
         public void CanSerializeSelfReferencingRecursiveTypes()
         {
-            var client = new SampleClient(RootUrl.TrimEnd('/'));
+            var client = new SampleClient(RootUrl);
             client.Serializer = Serializer;
             var nested = new RecursiveClass { Id = "2" };
             var obj = new RecursiveClass
@@ -69,7 +70,7 @@ namespace Salient.ReliableHttpClient.Serialization.Tests
             var gate = new AutoResetEvent(false);
             Exception exception = null;
             TestClass result = null;
-            var client = new SampleClient(RootUrl.TrimEnd('/'));
+            var client = new SampleClient(RootUrl);
             client.Serializer = Serializer;
             client.BeginGetTestClass(ar =>
             {

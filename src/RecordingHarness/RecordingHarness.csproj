@@ -37,8 +37,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CassiniDev4-lib">
-      <HintPath>..\packages\Salient.CassiniDev.5.0.1\lib\net40\Release\CassiniDev4-lib.dll</HintPath>
+    <Reference Include="CassiniDev.Lib">
+      <HintPath>..\packages\CassiniDevV6\CassiniDev.Lib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.7\lib\net40\Newtonsoft.Json.dll</HintPath>

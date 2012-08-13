@@ -75,12 +75,6 @@
     <Compile Include="RequestRetryDiscriminator.cs" />
     <Compile Include="Serialization\IJsonSerializer.cs" />
     <Compile Include="StreamRecorder.cs" />
-    <Compile Include="Testing\TestAsyncResult.cs" />
-    <Compile Include="Testing\TestRequestFactory.cs" />
-    <Compile Include="Testing\TestWebReponse.cs" />
-    <Compile Include="Testing\TestWebRequest.cs" />
-    <Compile Include="Testing\TestWebRequestFinder.cs" />
-    <Compile Include="Testing\TestWebStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DevKey.snk" />
