@@ -35,7 +35,17 @@ namespace Salient.ReliableHttpClient.Tests
                 return new ContentLocator(@"Salient.ReliableHttpClient.TestWeb").LocateContent();
             }
         }
+        [Test]
+        public void CanPurgeAndSHutdownWithNoPendingRequests()
+        {
+            var client = new ClientBase(new Serializer());
+            var handle = client.ShutDown();
+            if(!handle.WaitOne(1000))
+            {
+                Assert.Fail("handle should already be set");
+            }
 
+        }
         [Test]
         public void CanPurgeAndSHutdown()
         {
