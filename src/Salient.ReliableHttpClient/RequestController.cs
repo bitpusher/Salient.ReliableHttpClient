@@ -43,7 +43,7 @@ namespace Salient.ReliableHttpClient
         }
 
         public bool IncludeIndexInHeaders { get; set; }
-        private const int BackgroundInterval = 50;
+        private int BackgroundInterval = 50;
         private static readonly ILog Log = LogManager.GetLogger(typeof(RequestController));
         private readonly Thread _backgroundThread;
 
@@ -77,7 +77,11 @@ namespace Salient.ReliableHttpClient
             _requestFactory = requestFactory;
         }
 
-
+        public RequestController(IJsonSerializer serializer, int backgroundInterval)
+            : this(serializer)
+        {
+            BackgroundInterval = backgroundInterval;
+        }
         public RequestController(IJsonSerializer serializer)
         {
             _serializer = serializer;
@@ -283,38 +287,38 @@ namespace Salient.ReliableHttpClient
             return false;
         }
 
-//        private static void EnsureRequestWillAbortAfterTimeout(RequestInfo request, IAsyncResult result)
-//        {
-//            //TODO: How can we timeout a request for Silverlight, when calls to AsyncWaitHandle throw the following:
-//            //   Specified method is not supported. at System.Net.Browser.OHWRAsyncResult.get_AsyncWaitHandle() 
+        //        private static void EnsureRequestWillAbortAfterTimeout(RequestInfo request, IAsyncResult result)
+        //        {
+        //            //TODO: How can we timeout a request for Silverlight, when calls to AsyncWaitHandle throw the following:
+        //            //   Specified method is not supported. at System.Net.Browser.OHWRAsyncResult.get_AsyncWaitHandle() 
 
-//            // DAVID: i don't think that the async methods have a timeout parameter. we will need to build one into 
-//            // it. will not be terribly clean as it will prolly have to span both the throttle and the cache. I will look into it
-
-
-//#if !SILVERLIGHT
-//            ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, (state, isTimedOut) =>
-//                {
-//                    try
-//                    {
-//                        if (!isTimedOut) return;
-//                        if (state.GetType() != typeof(RequestInfo)) return;
-
-//                        var rh = (RequestInfo)state;
-//                        Trace.TraceError(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}",
-//                                                rh.Index, rh.Request.RequestUri, rh.Request.Timeout));
+        //            // DAVID: i don't think that the async methods have a timeout parameter. we will need to build one into 
+        //            // it. will not be terribly clean as it will prolly have to span both the throttle and the cache. I will look into it
 
 
-//                        rh.Request.Abort();
-//                    }
-//                    catch (Exception ex)
-//                    {
+        //#if !SILVERLIGHT
+        //            ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle, (state, isTimedOut) =>
+        //                {
+        //                    try
+        //                    {
+        //                        if (!isTimedOut) return;
+        //                        if (state.GetType() != typeof(RequestInfo)) return;
 
-//                        Trace.TraceError("Error timing out request: {0}", ex);
-//                    }
-//                }, request, request.Request.Timeout, true);
-//#endif
-//        }
+        //                        var rh = (RequestInfo)state;
+        //                        Trace.TraceError(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}",
+        //                                                rh.Index, rh.Request.RequestUri, rh.Request.Timeout));
+
+
+        //                        rh.Request.Abort();
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+
+        //                        Trace.TraceError("Error timing out request: {0}", ex);
+        //                    }
+        //                }, request, request.Request.Timeout, true);
+        //#endif
+        //        }
 
         private void PurgeExpiredItems()
         {
