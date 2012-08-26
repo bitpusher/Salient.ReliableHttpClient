@@ -61,7 +61,13 @@ namespace Salient.ReliableHttpClient
             Serializer = serializer;
         }
 
-
+        public ClientBase(IJsonSerializer serializer,int backgroundInterval)
+        {
+            Controller = new RequestController(serializer, backgroundInterval);
+            Controller.RequestCompleted += OnRequestCompleted;
+            UserAgent = "Salient.ReliableHttpClient";
+            Serializer = serializer;
+        }
 
         public ClientBase(IJsonSerializer serializer, IRequestFactory factory)
             : this(serializer)
