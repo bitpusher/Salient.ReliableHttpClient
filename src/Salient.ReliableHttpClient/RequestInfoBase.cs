@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -42,8 +43,9 @@ namespace Salient.ReliableHttpClient
 
 
         public int AttemptedRetries { get; set; }
-        public DateTimeOffset Issued { get; set; }
-        public DateTimeOffset Completed { get; set; }
+
+        public Stopwatch Watch { get; set; }
+
         public int Index { get; set; }
         public RequestItemState State { get; set; }
         public string ResponseText { get; set; }
@@ -213,8 +215,7 @@ namespace Salient.ReliableHttpClient
             sb.AppendLine(string.Format("UserAgent: {0}", UserAgent));
             sb.AppendLine(string.Format("ResponseText: {0}", ResponseText));
 
-            sb.AppendLine(string.Format("Latency: {0} ({1} {2})", Completed.Subtract(Issued).Duration(), Issued,
-                                        Completed));
+            sb.AppendLine(string.Format("Latency: {0}", Watch.Elapsed.Duration()));
             sb.AppendLine(string.Format("Retries: {0}/{1}", AttemptedRetries, AllowedRetries));
             sb.AppendLine(string.Format("Caching: duration - {0}, expires - {1}", CacheDuration, CacheExpiration));
 
@@ -235,10 +236,9 @@ namespace Salient.ReliableHttpClient
                                        AttemptedRetries = this.AttemptedRetries,
                                        CacheDuration = this.CacheDuration,
                                        CacheExpiration = this.CacheExpiration,
-                                       Completed = this.Completed,
+                                       Watch = this.Watch,
                                        Id = this.Id,
                                        Index = this.Index,
-                                       Issued = this.Issued,
                                        Method = this.Method,
 
                                        RequestBody = this.RequestBody,

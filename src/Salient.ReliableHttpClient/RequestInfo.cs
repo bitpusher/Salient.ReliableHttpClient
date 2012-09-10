@@ -99,10 +99,10 @@ namespace Salient.ReliableHttpClient
                         {
                             string json = reader.ReadToEnd();
                             ResponseInfo.ResponseText = json;
-                            Completed = DateTimeOffset.UtcNow;
+                            Watch.Stop();
                             ResponseText = json;
                             Log.Debug(string.Format("request completed: latency {1}\r\nITEM\r\n{0}", this,
-                                                    Completed.Subtract(Issued).Duration()));
+                                                    Watch.Elapsed.Duration()));
                         }
                     }
                 }
