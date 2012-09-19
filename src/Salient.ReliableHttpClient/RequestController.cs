@@ -195,7 +195,7 @@ namespace Salient.ReliableHttpClient
 
                     try
                     {
-                        request.Issued = DateTimeOffset.UtcNow;
+                        request.Watch = Stopwatch.StartNew();
 
                         // #TODO: this is where we need to implement homegrown timeout functionality.
 
@@ -219,6 +219,8 @@ namespace Salient.ReliableHttpClient
                                 {
                                     // the only time an exception will come out of CompleteRequest is if the request wants to be retried
                                     request.AttemptedRetries++;
+                                    request.Watch.Reset();
+                                    request.Watch.Start();
                                     Log.Warn(string.Format("retrying request {3} {0}\r\nattempt #{1}\r\nerror:{2} \r\nrequest:\r\n{4}",
                                         request.Id, request.AttemptedRetries, ex.Message, request.Index, request.ToString()));
                                     // create a new httprequest for this guy
