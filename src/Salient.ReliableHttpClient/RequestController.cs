@@ -196,7 +196,7 @@ namespace Salient.ReliableHttpClient
                     try
                     {
                         request.Watch = Stopwatch.StartNew();
-
+                        request.Issued = DateTimeOffset.UtcNow;
                         // #TODO: this is where we need to implement homegrown timeout functionality.
 
                         var gate = new ManualResetEvent(false);

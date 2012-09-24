@@ -41,7 +41,8 @@ namespace Salient.ReliableHttpClient
         public DateTimeOffset CacheExpiration { get; set; }
         public Guid Id { get; set; }
 
-
+        public DateTimeOffset Issued { get; set; }
+        public DateTimeOffset Completed { get; set; }
         public int AttemptedRetries { get; set; }
 
         public Stopwatch Watch { get; set; }
@@ -240,7 +241,8 @@ namespace Salient.ReliableHttpClient
                                        Id = this.Id,
                                        Index = this.Index,
                                        Method = this.Method,
-
+                                       Completed = this.Completed,
+                                       Issued = this.Issued,
                                        RequestBody = this.RequestBody,
                                        RequestContentType = this.RequestContentType,
                                        ResponseContentType = this.ResponseContentType,

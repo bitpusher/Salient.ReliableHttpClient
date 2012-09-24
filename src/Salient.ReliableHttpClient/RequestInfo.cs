@@ -97,6 +97,7 @@ namespace Salient.ReliableHttpClient
                         using (var reader = new StreamReader(stream))
                         // ReSharper restore AssignNullToNotNullAttribute
                         {
+                            Completed = DateTimeOffset.UtcNow;
                             string json = reader.ReadToEnd();
                             ResponseInfo.ResponseText = json;
                             Watch.Stop();
@@ -107,39 +108,7 @@ namespace Salient.ReliableHttpClient
                     }
                 }
             }
-            //catch (WebException ex)
-            //{
-
-
-
-            //    if (ex.Response != null)
-            //    {
-            //        if (ex.Response.ContentLength > 0)
-            //        {
-            //            using (Stream stream = ex.Response.GetResponseStream())
-            //            {
-            //                using (StreamReader reader = new StreamReader(stream))
-            //                {
-            //                    ResponseText = reader.ReadToEnd().Trim();
-            //                }
-            //            }
-            //        }
-            //    }
-
-
-            //    Exception = ReliableHttpException.Create(ex);
-
-
-
-
-
-            //    // if we have allowed retries, log the error and throw it so the controller can retry for us
-            //    if (AttemptedRetries < AllowedRetries)
-            //    {
-            //        throw;
-            //    }
-            //    // otherwise just compelte the callbacks with the error
-            //}
+        
             catch (Exception ex)
             {
                 string errorMessage = string.Format("{1} - failed {0} times", AttemptedRetries + 1, ex.Message);
