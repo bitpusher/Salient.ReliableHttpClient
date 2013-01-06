@@ -91,7 +91,7 @@ namespace Salient.ReliableHttpClient.ReferenceImplementation
 
         public void BeginCreateService1(SampleItem instance, ReliableAsyncCallback callback, object state)
         {
-            BeginRequest(RequestMethod.POST, _target, "Service1/", null, new Dictionary<string, object> { { "instance", instance } }, ContentType.JSON, ContentType.JSON, TimeSpan.Zero, 3000, 0, callback, state);
+            BeginRequest(RequestMethod.POST, _target, "Service1/",null, new Dictionary<string, object> { { "instance", instance } }, ContentType.JSON, ContentType.JSON, TimeSpan.Zero, 3000, 0, callback, state);
         }
 
         public SampleItem EndCreateService1(ReliableAsyncResult result)

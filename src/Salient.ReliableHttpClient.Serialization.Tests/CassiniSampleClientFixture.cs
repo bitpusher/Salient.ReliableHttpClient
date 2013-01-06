@@ -18,6 +18,7 @@ namespace Salient.ReliableHttpClient.Serialization.Tests
         [TestFixtureSetUp]
         public void Start()
         {
+            Thread.Sleep(1500);
             StartServer(ContentLocation);
         }
         [TestFixtureTearDown]

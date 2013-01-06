@@ -58,7 +58,7 @@ namespace Salient.ReliableHttpClient
 #if !SILVERLIGHT
             request.AutomaticDecompression = DecompressionMethods;
 #endif
-
+            request.AllowAutoRedirect = true;
 
             return request;
         }
