@@ -19,16 +19,24 @@ namespace Salient.ReliableHttpClient
         public IJsonSerializer Serializer { get; set; }
 
         public event EventHandler<RequestCompletedEventArgs> RequestCompleted;
-
+        public WaitHandle ShutDown(bool clearQueue)
+        {
+            lock (Controller)
+            {
+                if (clearQueue)
+                {
+                    Controller.ClearQueue();
+                }
+                _shuttingDown = true;
+                
+                _purgeHandle = new ManualResetEvent(Controller.RequestQueue.Count == 0);
+                return _purgeHandle;
+            }
+        }
         public WaitHandle ShutDown()
         {
-            lock(Controller)
-            {
-                _shuttingDown = true;
-                _purgeHandle = new ManualResetEvent(Controller.RequestQueue.Count == 0);
-                return _purgeHandle;    
-            }
-            
+
+            return ShutDown(false);
         }
 
         void OnRequestCompleted(object sender, RequestCompletedEventArgs e)

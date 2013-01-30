@@ -14,66 +14,66 @@ using Salient.ReliableHttpClient.Serialization.Newtonsoft;
 
 namespace Salient.ReliableHttpClient.UnitTests
 {
-    [TestFixture]
-    public class TestRequestFactoryFixture
-    {
+    //[TestFixture]
+    //public class TestRequestFactoryFixture
+    //{
   
-        [Test]
-        public void Test()
-        {
-            var server = new CassiniDevServer();
+    //    [Test]
+    //    public void Test()
+    //    {
+    //        var server = new CassiniDevServer();
 
-            server.StartServer(Environment.CurrentDirectory);
-            server.Server.ProcessRequest += (i, e) =>
-            {
+    //        server.StartServer(Environment.CurrentDirectory);
+    //        server.Server.ProcessRequest += (i, e) =>
+    //        {
              
 
-                e.Continue = false;
-                e.Response = "{\"Id\":1}";
-            };
+    //            e.Continue = false;
+    //            e.Response = "{\"Id\":1}";
+    //        };
 
 
-            var client = new SampleClient(server.RootUrl);
+    //        var client = new SampleClient(server.RootUrl);
 
-            var gate = new AutoResetEvent(false);
-            TestClass response = null;
-            Exception exception = null;
+    //        var gate = new AutoResetEvent(false);
+    //        TestClass response = null;
+    //        Exception exception = null;
 
 
 
-            client.BeginGetTestClass(ar =>
-                                         {
+    //        client.BeginGetTestClass(ar =>
+    //                                     {
 
-                                             try
-                                             {
-                                                 response = client.EndGetTestClass(ar);
-                                             }
-                                             catch (Exception ex)
-                                             {
+    //                                         try
+    //                                         {
+    //                                             response = client.EndGetTestClass(ar);
+    //                                         }
+    //                                         catch (Exception ex)
+    //                                         {
 
-                                                 exception = ex;
-                                             }
-                                             finally
-                                             {
-                                                 server.Dispose();
-                                                 gate.Set();
+    //                                             exception = ex;
+    //                                         }
+    //                                         finally
+    //                                         {
+    //                                             server.Dispose();
+    //                                             gate.Set();
 
-                                             }
+    //                                         }
 
-                                         }, null);
+    //                                     }, null);
 
-            if (!gate.WaitOne(40000))
-            {
-                throw new Exception("timed out");
-            }
+    //        if (!gate.WaitOne(40000))
+    //        {
+    //            throw new Exception("timed out");
+    //        }
 
-            if (exception != null)
-            {
-                throw exception;
-            }
-            Assert.AreEqual(1, response.Id);
+    //        if (exception != null)
+    //        {
+    //            throw exception;
+    //        }
+    //        Assert.AreEqual(1, response.Id);
 
-        }
+    //    }
 
-    }
+    //}
 }

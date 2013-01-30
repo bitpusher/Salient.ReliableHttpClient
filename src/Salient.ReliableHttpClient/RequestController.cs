@@ -544,5 +544,45 @@ namespace Salient.ReliableHttpClient
         }
         #endregion
 
+        public void ClearQueue()
+        {
+            lock (_lockTarget)
+            {
+                foreach (var requestInfo in RequestQueue)
+                {
+                    try
+                    {
+
+                        requestInfo.Callbacks.Clear();
+
+                        switch (requestInfo.State)
+                        {
+                            case RequestItemState.Complete:
+                            case RequestItemState.Ready:
+                            case RequestItemState.Preparing:
+                            case RequestItemState.New:
+                            case RequestItemState.Processing:
+
+                                break;
+
+                            case RequestItemState.Pending:
+
+
+                                requestInfo.Request.Abort();
+
+
+                                break;
+                        }
+                    }
+                    catch  (Exception ex)
+                    {
+                        
+                        Log.Error(ex);
+                    }
+                }
+                RequestQueue.Clear();
+            }
+
+        }
     }
 }
