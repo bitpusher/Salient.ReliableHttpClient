@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using CassiniDev;
+ 
 using NUnit.Framework;
 using Salient.ReliableHttpClient.ReferenceImplementation;
 using Salient.ReliableHttpClient.Serialization.Newtonsoft;

@@ -88,10 +88,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CassiniDev\CassiniDev.Lib.csproj">
-      <Project>{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}</Project>
-      <Name>CassiniDev.Lib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Salient.ReliableHttpClient.ReferenceImplementation\Salient.ReliableHttpClient.ReferenceImplementation.csproj">
       <Project>{AEDA66F4-E83F-4971-95B3-154F32132A87}</Project>
       <Name>Salient.ReliableHttpClient.ReferenceImplementation</Name>

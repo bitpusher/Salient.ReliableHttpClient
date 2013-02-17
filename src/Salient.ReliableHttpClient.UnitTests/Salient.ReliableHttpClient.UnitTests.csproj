@@ -90,10 +90,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CassiniDev\CassiniDev.Lib.csproj">
-      <Project>{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}</Project>
-      <Name>CassiniDev.Lib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Salient.ReliableHttpClient.Serializer.Newtonsoft\Salient.ReliableHttpClient.Serializer.Newtonsoft.csproj">
       <Project>{B2F31D08-C115-451D-BAD2-F56F2148143B}</Project>
       <Name>Salient.ReliableHttpClient.Serializer.Newtonsoft</Name>
