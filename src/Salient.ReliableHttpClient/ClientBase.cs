@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -310,7 +309,14 @@ namespace Salient.ReliableHttpClient
                                     {
                                         throw new ArgumentException("POST method with too many parameters");
                                     }
-                                    body = Serializer.SerializeObject(localParams.First().Value);
+
+                                    // hack to backport from fx3.5
+                                    foreach (var localParam in localParams)
+                                    {
+                                        body = Serializer.SerializeObject(localParam.Value);
+                                        break;
+                                    }
+                                    
 
                                     break;
                                 case ContentType.FORM:
