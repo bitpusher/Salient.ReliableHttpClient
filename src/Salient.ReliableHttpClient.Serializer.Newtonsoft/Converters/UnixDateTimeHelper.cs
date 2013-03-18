@@ -13,7 +13,7 @@ namespace Salient.ReliableHttpClient.Serialization.Newtonsoft
         ///   Convert a long into a DateTimeOffset
         ///   Need to double check that UTC is not required
         /// </summary>
-        public static DateTimeOffset FromUnixTime(Int64 self)
+        public static DateTimeOffset FromUnixTime(this Int64 self)
         {
             var ret = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
             return ret.AddSeconds(self);
@@ -24,15 +24,15 @@ namespace Salient.ReliableHttpClient.Serialization.Newtonsoft
         ///</summary>
         ///<param name="self"></param>
         ///<returns></returns>
-        public static Int64 ToUnixTime(DateTimeOffset self)
+        public static Int64 ToUnixTime(this DateTimeOffset self)
         {
-            return ToUnixTime(self,true);
+            return self.ToUnixTime(true);
         }
         /// <summary>
         ///   Convert a DateTimeOffset into a long
         ///   Need to double check that UTC is not required
         /// </summary>
-        public static Int64 ToUnixTime(DateTimeOffset self,bool fixMinDate)
+        public static Int64 ToUnixTime(this DateTimeOffset self,bool fixMinDate)
         {
             if (self == DateTimeOffset.MinValue)
             {
@@ -68,7 +68,7 @@ namespace Salient.ReliableHttpClient.Serialization.Newtonsoft
         ///   Convert a long into a DateTime
         ///   Need to double check that UTC is not required
         /// </summary>
-        public static DateTime FromUnixTime( Int64 self)
+        public static DateTime FromUnixTime(this Int64 self)
         {
             var ret = new DateTime(1970, 1, 1);
             return ret.AddSeconds(self);
@@ -78,7 +78,7 @@ namespace Salient.ReliableHttpClient.Serialization.Newtonsoft
         ///   Convert a DateTime into a long
         ///   Need to double check that UTC is not required
         /// </summary>
-        public static Int64 ToUnixTime( DateTime self)
+        public static Int64 ToUnixTime(this DateTime self)
         {
             if (self == DateTime.MinValue)
             {

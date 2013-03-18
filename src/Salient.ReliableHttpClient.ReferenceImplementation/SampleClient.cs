@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using Salient.ReliableHttpClient.Serialization;
 using Salient.ReliableHttpClient.Serialization.Newtonsoft;
 
 namespace Salient.ReliableHttpClient.ReferenceImplementation

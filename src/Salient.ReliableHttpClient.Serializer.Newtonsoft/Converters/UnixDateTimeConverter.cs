@@ -31,7 +31,7 @@ namespace Salient.ReliableHttpClient.Serialization.Newtonsoft
             long val;
             if (value is DateTime)
             {
-                val = UnixDateTimeHelper.ToUnixTime((DateTime)value);
+                val = ((DateTime)value).ToUnixTime();
             }
             else
             {
@@ -80,7 +80,7 @@ namespace Salient.ReliableHttpClient.Serialization.Newtonsoft
             // TODO: perhaps a bit of leniency is in order here. Can convert a date to datetime offset
             if (value is DateTimeOffset)
             {
-                val = UnixDateTimeOffsetHelper.ToUnixTime((DateTimeOffset)value);
+                val = ((DateTimeOffset)value).ToUnixTime();
             }
             else
             {

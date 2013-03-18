@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Salient.ReflectiveLoggingAdapter;
@@ -354,26 +355,11 @@ namespace Salient.ReliableHttpClient
             }
         }
 
-        private RequestInfo FirstOrDefaultUri(IEnumerable<RequestInfo> target, string uri)
-        {
-            RequestInfo result = null;
-            foreach (var requestInfo in target)
-            {
-                if (requestInfo.Uri.AbsoluteUri == uri)
-                {
-                    result = requestInfo;
-                    break;
-                }
-            }
-            return result;
-        }
-
         private RequestInfo GetRequestInfo(Uri uri)
         {
             lock (_lockTarget)
             {
-                RequestInfo info = FirstOrDefaultUri(_requestCache, uri.AbsoluteUri);
-                    
+                RequestInfo info = _requestCache.FirstOrDefault(r => r.Uri.AbsoluteUri == uri.AbsoluteUri);
                 if (info != null)
                 {
                     switch (info.State)

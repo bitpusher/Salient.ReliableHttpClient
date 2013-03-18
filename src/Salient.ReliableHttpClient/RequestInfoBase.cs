@@ -69,7 +69,7 @@ namespace Salient.ReliableHttpClient
             Request.Method = info.Method.ToString();
             if ((info.Method == RequestMethod.POST || info.Method == RequestMethod.PUT))
             {
-                Request.ContentType = Extensions.ToHeaderValue(info.RequestContentType);
+                Request.ContentType = info.RequestContentType.ToHeaderValue();
             }
 
 
