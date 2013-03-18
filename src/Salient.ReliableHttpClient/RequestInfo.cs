@@ -7,6 +7,7 @@ using System.Threading;
 using Salient.ReflectiveLoggingAdapter;
 
 
+
 namespace Salient.ReliableHttpClient
 {
     public class RequestInfo : RequestInfoBase

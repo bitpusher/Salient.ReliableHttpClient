@@ -2,6 +2,7 @@
 using System.Net;
 using Salient.ReflectiveLoggingAdapter;
 
+
 namespace Salient.ReliableHttpClient
 {
     /// <summary>

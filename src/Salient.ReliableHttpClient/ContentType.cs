@@ -12,7 +12,7 @@ namespace Salient.ReliableHttpClient
 
     public static class Extensions
     {
-        public static string ToHeaderValue(this ContentType value)
+        public static string ToHeaderValue(ContentType value)
         {
             switch (value)
 
