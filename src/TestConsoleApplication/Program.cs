@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Salient.ReliableHttpClient.UnitTests;
 
 namespace TestConsoleApplication
 {
@@ -10,14 +11,18 @@ namespace TestConsoleApplication
     {
         static void Main(string[] args)
         {
+            var abortAfterMs = 500;
+            
             Console.WriteLine("Starting...");
 			new Thread(() =>
 			{
-				throw new Exception();
+                var client = new AbortingHttpClient();
+                client.TriggerAbort(abortAfterMs);
 			}).Start();
 
-            Console.WriteLine("Working for 1 sec...");
-            Thread.Sleep(1000);
+            Console.WriteLine("Working...");
+            Thread.Sleep(abortAfterMs * 10);
+
             Console.WriteLine("Finished successfully.");
         }
     }
@@ -26,13 +31,18 @@ namespace TestConsoleApplication
      * 
  C:\Dev\Salient.ReliableHttpClient\src\TestConsoleApplication\bin\Debug>TestConsoleApplication.exe
 Starting...
-Working for 1 sec...
+Working...
+Async requesting http://127.0.0.1/
+Simulating a timeout occuring...
+Aborting request after timeout
 
-Unhandled Exception: System.Exception: Exception of type 'System.Exception' was
-thrown.
-   at TestConsoleApplication.Program.<Main>b__0() in c:\Users\mrdavidlaing\Docum
-ents\GitHub\Salient.ReliableHttpClient\src\TestConsoleApplication\Program.cs:lin
-e 16
+Unhandled Exception: System.Net.WebException: Simulated exception from request.A
+bort
+   at Salient.ReliableHttpClient.UnitTests.AbortingHttpClient.<>c__DisplayClass4
+.<TriggerAbort>b__1() in c:\Users\mrdavidlaing\Documents\GitHub\Salient.Reliable
+HttpClient\src\Salient.ReliableHttpClient.UnitTests\RequestAbortFixture.cs:line
+81
+   at System.Threading.ThreadHelper.ThreadStart_Context(Object state)
    at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionCo
 ntext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
    at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, C
@@ -40,7 +50,6 @@ ontextCallback callback, Object state, Boolean preserveSyncCtx)
    at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, C
 ontextCallback callback, Object state)
    at System.Threading.ThreadHelper.ThreadStart()
-Finished successfully.
      * 
      */
 }

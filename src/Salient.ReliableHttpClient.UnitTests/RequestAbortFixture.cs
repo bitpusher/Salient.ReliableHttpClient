@@ -37,7 +37,7 @@ namespace Salient.ReliableHttpClient.UnitTests
                 IAsyncResult webRequestAsyncResult = request.BeginGetResponse(ar =>
                 {
                     //Log.Info(string.Format("Received #{0} : {1} ", request.Index, request.Uri));
-                    Console.WriteLine("Received {0}", request.RequestUri);
+                    Console.WriteLine("Async requesting {0}", request.RequestUri);
 
                     // let's try to complete the request
                     //_outstandingRequests--;
