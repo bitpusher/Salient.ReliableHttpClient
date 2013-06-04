@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
@@ -77,6 +78,7 @@ namespace Salient.ReliableHttpClient.UnitTests
 
                             Console.WriteLine("Aborting request after timeout");
                             request.Abort();
+                            throw new WebException("Simulated exception from request.Abort");
                         }
                     }).Start();
 
