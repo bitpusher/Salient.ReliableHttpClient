@@ -232,15 +232,16 @@ namespace Salient.ReliableHttpClient
 
                         new Thread(() =>
                                        {
-                                           Console.WriteLine("About to simulate request.abort exception happening");
-                                           throw new System.Net.WebException("Simulating request.abort exception happening");
+  
+                                               if (!gate.WaitOne(request.Timeout))
+                                               {
+                                                   // #TODO: disassociate the HttpWebRequest from the result, abort it, complete the result with a timeout exception
+                                                   Log.Error(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}", request.Index, request.Request.RequestUri, request.Timeout));
+                                                   request.Request.Abort();
 
-                                           if (!gate.WaitOne(request.Timeout))
-                                           {
-                                               // #TODO: disassociate the HttpWebRequest from the result, abort it, complete the result with a timeout exception
-                                               Log.Error(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}", request.Index, request.Request.RequestUri, request.Timeout));
-                                               request.Request.Abort();
-                                           }
+                                                   Console.WriteLine("About to simulate request.abort exception happening");
+                                                   throw new System.Net.WebException("Simulating request.abort exception happening");
+                                               }
                                        }).Start();
 
                         // #TODO: timeouts do not apply to async HttpWebRequests so we need to implement this ourselves
