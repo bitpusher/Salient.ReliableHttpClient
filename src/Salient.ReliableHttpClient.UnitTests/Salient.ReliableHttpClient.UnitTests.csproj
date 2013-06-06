@@ -85,6 +85,7 @@
     <Compile Include="PrerequisiteFixture.cs" />
     <Compile Include="TestRequestFactoryFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeoutFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
