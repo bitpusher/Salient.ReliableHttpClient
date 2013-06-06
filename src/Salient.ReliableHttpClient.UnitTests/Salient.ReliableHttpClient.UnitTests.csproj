@@ -83,6 +83,7 @@
     <Compile Include="implementation\SampleClient.cs" />
     <Compile Include="implementation\TestClass.cs" />
     <Compile Include="PrerequisiteFixture.cs" />
+    <Compile Include="RequestAbortFixture.cs" />
     <Compile Include="TestRequestFactoryFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeoutFixture.cs" />
