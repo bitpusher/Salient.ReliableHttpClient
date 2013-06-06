@@ -56,6 +56,10 @@
       <Project>{B2F31D08-C115-451D-BAD2-F56F2148143B}</Project>
       <Name>Salient.ReliableHttpClient.Serializer.Newtonsoft</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Salient.ReliableHttpClient.UnitTests\Salient.ReliableHttpClient.UnitTests.csproj">
+      <Project>{91B276EB-D5E6-40AF-9FA0-DF956489AF87}</Project>
+      <Name>Salient.ReliableHttpClient.UnitTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Salient.ReliableHttpClient\Salient.ReliableHttpClient.csproj">
       <Project>{528B283F-41C8-489D-A031-C9A4058BB283}</Project>
       <Name>Salient.ReliableHttpClient</Name>

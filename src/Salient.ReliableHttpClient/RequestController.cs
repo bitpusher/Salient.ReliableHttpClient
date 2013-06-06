@@ -232,6 +232,9 @@ namespace Salient.ReliableHttpClient
 
                         new Thread(() =>
                                        {
+                                           Console.WriteLine("About to simulate request.abort exception happening");
+                                           throw new System.Net.WebException("Simulating request.abort exception happening");
+
                                            if (!gate.WaitOne(request.Timeout))
                                            {
                                                // #TODO: disassociate the HttpWebRequest from the result, abort it, complete the result with a timeout exception
