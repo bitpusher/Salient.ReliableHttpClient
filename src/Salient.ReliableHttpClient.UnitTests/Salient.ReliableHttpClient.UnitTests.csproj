@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbortingHttpClient.cs" />
     <Compile Include="implementation\SampleClient.cs" />
     <Compile Include="implementation\TestClass.cs" />
     <Compile Include="PrerequisiteFixture.cs" />
