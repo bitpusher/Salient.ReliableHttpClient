@@ -232,14 +232,21 @@ namespace Salient.ReliableHttpClient
 
                         new Thread(() =>
                                        {
-                                           Console.WriteLine("About to simulate request.abort exception happening");
-                                           throw new System.Net.WebException("Simulating request.abort exception happening");
-
                                            if (!gate.WaitOne(request.Timeout))
                                            {
                                                // #TODO: disassociate the HttpWebRequest from the result, abort it, complete the result with a timeout exception
                                                Log.Error(string.Format("Aborting #{0} : {1} because it has exceeded timeout {2}", request.Index, request.Request.RequestUri, request.Timeout));
-                                               request.Request.Abort();
+
+                                               try
+                                               {
+                                                   request.Request.Abort();
+                                               }
+                                               catch (Exception ex)
+                                               {
+
+                                                   Log.Warn(string.Format("Error trapped and swallowed while aborting #{0} : {1} \r\n{2}", request.Index, request.Request.RequestUri, ex.ToString()));
+                                               }
+
                                            }
                                        }).Start();
 
@@ -577,9 +584,9 @@ namespace Salient.ReliableHttpClient
                                 break;
                         }
                     }
-                    catch  (Exception ex)
+                    catch (Exception ex)
                     {
-                        
+
                         Log.Error(ex);
                     }
                 }
