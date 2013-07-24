@@ -72,8 +72,8 @@ namespace Salient.ReliableHttpClient
 
 
         private int _backgroundInterval = 50;
-        private int _maxPendingRequests = 5;
-        private int _throttleWindowCount = 20;
+        private int _maxPendingRequests = 4;
+        private int _throttleWindowCount = 15;
         private TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(15);
 
 
