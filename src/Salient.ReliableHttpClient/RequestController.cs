@@ -73,8 +73,8 @@ namespace Salient.ReliableHttpClient
 
         private int _backgroundInterval = 50;
         private int _maxPendingRequests = 5;
-        private int _throttleWindowCount = 30;
-        private TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(10);
+        private int _throttleWindowCount = 20;
+        private TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(15);
 
 
         // #TODO: clean up ctors
