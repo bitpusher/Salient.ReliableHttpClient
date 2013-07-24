@@ -42,21 +42,21 @@ namespace Salient.ReliableHttpClient
             }
         }
 
+
         public bool IncludeIndexInHeaders { get; set; }
-        private int BackgroundInterval = 50;
+
         private static readonly ILog Log = LogManager.GetLogger(typeof(RequestController));
         private readonly Thread _backgroundThread;
 
 
         private readonly object _lockTarget = new object();
 
-        private readonly int _maxPendingRequests = 10;
+        
         private readonly List<RequestInfo> _requestCache;
         private readonly IRequestFactory _requestFactory;
         internal readonly Queue<RequestInfo> RequestQueue = new Queue<RequestInfo>();
         private readonly Queue<DateTimeOffset> _requestTimes = new Queue<DateTimeOffset>();
-        private readonly int _throttleWindowCount = 30;
-        private readonly TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(10);
+
 
         private readonly AutoResetEvent _waitHandle;
         private int _dispatchedCount;
@@ -70,6 +70,35 @@ namespace Salient.ReliableHttpClient
         private bool _processingQueue;
         private IJsonSerializer _serializer;
 
+
+        private int _backgroundInterval = 50;
+        private int _maxPendingRequests = 5;
+        private int _throttleWindowCount = 30;
+        private TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(10);
+
+
+        // #TODO: clean up ctors
+
+        public RequestController(IJsonSerializer serializer, int backgroundInterval, int maxPendingRequests, int throttleWindowCount, TimeSpan throttleWindowTime)
+        
+        {
+            _throttleWindowTime = throttleWindowTime;
+            _throttleWindowCount = throttleWindowCount;
+            _maxPendingRequests = maxPendingRequests;
+            _backgroundInterval = backgroundInterval;
+            _serializer = serializer;
+            Id = Guid.NewGuid();
+            Log.Debug("creating RequestController: " + Id);
+            _requestFactory = new RequestFactory();
+            _requestCache = new List<RequestInfo>();
+            RequestQueue = new Queue<RequestInfo>();
+            _waitHandle = new AutoResetEvent(false);
+            _backgroundThread = new Thread(BackgroundProcess);
+            _backgroundThread.Start();
+            Log.Debug("created RequestController: " + Id);
+        }
+
+
         public RequestController(IJsonSerializer serializer,
                                  IRequestFactory requestFactory)
             : this(serializer)
@@ -80,12 +109,12 @@ namespace Salient.ReliableHttpClient
         public RequestController(IJsonSerializer serializer, int backgroundInterval)
             : this(serializer)
         {
-            BackgroundInterval = backgroundInterval;
+            _backgroundInterval = backgroundInterval;
         }
+
         public RequestController(IJsonSerializer serializer)
         {
             _serializer = serializer;
-            //Recorder = new Recorder(_serializer);
             Id = Guid.NewGuid();
             Log.Debug("creating RequestController: " + Id);
             _requestFactory = new RequestFactory();
@@ -130,7 +159,7 @@ namespace Salient.ReliableHttpClient
 
                     ProcessQueue();
                 }
-                _waitHandle.WaitOne(BackgroundInterval);
+                _waitHandle.WaitOne(_backgroundInterval);
             }
         }
 

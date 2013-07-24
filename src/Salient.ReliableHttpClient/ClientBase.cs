@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,55 +10,11 @@ namespace Salient.ReliableHttpClient
 {
     public class ClientBase : IDisposable
     {
-        private bool _shuttingDown;
-        private ManualResetEvent _purgeHandle;
-
         protected RequestController Controller;
+        private bool _disposed;
+        private ManualResetEvent _purgeHandle;
+        private bool _shuttingDown;
         private string _userAgent;
-        public IJsonSerializer Serializer { get; set; }
-
-        public event EventHandler<RequestCompletedEventArgs> RequestCompleted;
-        public WaitHandle ShutDown(bool clearQueue)
-        {
-            lock (Controller)
-            {
-                if (clearQueue)
-                {
-                    Controller.ClearQueue();
-                }
-                _shuttingDown = true;
-                
-                _purgeHandle = new ManualResetEvent(Controller.RequestQueue.Count == 0);
-                return _purgeHandle;
-            }
-        }
-        public WaitHandle ShutDown()
-        {
-
-            return ShutDown(false);
-        }
-
-        void OnRequestCompleted(object sender, RequestCompletedEventArgs e)
-        {
-            EventHandler<RequestCompletedEventArgs> handler = RequestCompleted;
-            try
-            {
-                if (handler != null) handler(this, e);
-            }
-            catch (Exception ex)
-            {
-
-                //log and swallow
-
-            }
-            if (_purgeHandle != null)
-            {
-                if (Controller.RequestQueue.Count == 0)
-                {
-                    _purgeHandle.Set();
-                }
-            }
-        }
 
         public ClientBase(IJsonSerializer serializer)
         {
@@ -69,7 +24,7 @@ namespace Salient.ReliableHttpClient
             Serializer = serializer;
         }
 
-        public ClientBase(IJsonSerializer serializer,int backgroundInterval)
+        public ClientBase(IJsonSerializer serializer, int backgroundInterval)
         {
             Controller = new RequestController(serializer, backgroundInterval);
             Controller.RequestCompleted += OnRequestCompleted;
@@ -85,6 +40,7 @@ namespace Salient.ReliableHttpClient
             UserAgent = "Salient.ReliableHttpClient";
         }
 
+        public IJsonSerializer Serializer { get; set; }
 
 
         public bool IncludeIndexInHeaders
@@ -99,7 +55,6 @@ namespace Salient.ReliableHttpClient
             }
             set
             {
-
                 if (_disposed)
                 {
                     throw new ObjectDisposedException(GetType().FullName);
@@ -134,11 +89,50 @@ namespace Salient.ReliableHttpClient
 
         #endregion
 
+        public event EventHandler<RequestCompletedEventArgs> RequestCompleted;
 
+        public WaitHandle ShutDown(bool clearQueue)
+        {
+            lock (Controller)
+            {
+                if (clearQueue)
+                {
+                    Controller.ClearQueue();
+                }
+                _shuttingDown = true;
 
+                _purgeHandle = new ManualResetEvent(Controller.RequestQueue.Count == 0);
+                return _purgeHandle;
+            }
+        }
+
+        public WaitHandle ShutDown()
+        {
+            return ShutDown(false);
+        }
+
+        private void OnRequestCompleted(object sender, RequestCompletedEventArgs e)
+        {
+            EventHandler<RequestCompletedEventArgs> handler = RequestCompleted;
+            try
+            {
+                if (handler != null) handler(this, e);
+            }
+            catch (Exception ex)
+            {
+                //log and swallow
+            }
+            if (_purgeHandle != null)
+            {
+                if (Controller.RequestQueue.Count == 0)
+                {
+                    _purgeHandle.Set();
+                }
+            }
+        }
 
         /// <summary>
-        /// Composes the url for a request from components
+        ///     Composes the url for a request from components
         /// </summary>
         /// <param name="target"></param>
         /// <param name="uriTemplate"></param>
@@ -154,7 +148,7 @@ namespace Salient.ReliableHttpClient
         }
 
         /// <summary>
-        /// Replaces templates with parameter values, if present, and cleans up missing templates.
+        ///     Replaces templates with parameter values, if present, and cleans up missing templates.
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="url"></param>
@@ -162,19 +156,19 @@ namespace Salient.ReliableHttpClient
         private static string ApplyUriTemplateParameters(Dictionary<string, object> parameters, string url)
         {
             url = new Regex(@"{\w+}").Replace(url, match =>
-                                                       {
-                                                           string key = match.Value.Substring(1, match.Value.Length - 2);
-                                                           if (parameters.ContainsKey(key))
-                                                           {
-                                                               object paramValue = parameters[key];
-                                                               parameters.Remove(key);
-                                                               if (paramValue != null)
-                                                               {
-                                                                   return paramValue.ToString();
-                                                               }
-                                                           }
-                                                           return null;
-                                                       });
+                {
+                    string key = match.Value.Substring(1, match.Value.Length - 2);
+                    if (parameters.ContainsKey(key))
+                    {
+                        object paramValue = parameters[key];
+                        parameters.Remove(key);
+                        if (paramValue != null)
+                        {
+                            return paramValue.ToString();
+                        }
+                    }
+                    return null;
+                });
 
             // clean up unused templates
             url = new Regex(@"\w+={\w+}").Replace(url, "");
@@ -237,18 +231,18 @@ namespace Salient.ReliableHttpClient
             BeginRequest(method, target, uriTemplate, headers, parameters, requestContentType, responseContentType,
                          cacheDuration,
                          timeout, retryCount, ar =>
-                                                  {
-                                                      try
-                                                      {
-                                                          response = EndRequest(ar);
-                                                      }
-                                                      catch (Exception ex)
-                                                      {
-                                                          exception = ex;
-                                                      }
+                             {
+                                 try
+                                 {
+                                     response = EndRequest(ar);
+                                 }
+                                 catch (Exception ex)
+                                 {
+                                     exception = ex;
+                                 }
 
-                                                      gate.Set();
-                                                  }, null);
+                                 gate.Set();
+                             }, null);
 
             // #FIXME: what is a good absolute master timeout?
             gate.WaitOne();
@@ -354,7 +348,6 @@ namespace Salient.ReliableHttpClient
             return Controller.EndRequest(result);
         }
 
-        private bool _disposed;
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
