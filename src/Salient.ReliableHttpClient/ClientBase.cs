@@ -16,6 +16,19 @@ namespace Salient.ReliableHttpClient
         private bool _shuttingDown;
         private string _userAgent;
 
+
+
+
+        // #TODO: clean up ctors
+
+        public ClientBase(IJsonSerializer serializer, int backgroundInterval, int maxPendingRequests, int throttleWindowCount, TimeSpan throttleWindowTime)
+        {
+            Controller = new RequestController(serializer,  backgroundInterval, maxPendingRequests, throttleWindowCount, throttleWindowTime);
+            Controller.RequestCompleted += OnRequestCompleted;
+            UserAgent = "Salient.ReliableHttpClient";
+            Serializer = serializer;
+        }
+
         public ClientBase(IJsonSerializer serializer)
         {
             Controller = new RequestController(serializer);
