@@ -15,9 +15,10 @@ namespace Salient.ReliableHttpClient
     {
         public bool ShouldRetry(WebException webException)
         {
-            if (webException.Message.ToLower().Contains("(500) internal server error")) return true;
-            if (webException.Message.ToLower().Contains("(504) gateway timeout")) return true;
-            if (webException.Message.ToLower().Contains("(408) request timeout")) return true;
+            if (webException.Message.ToLower().Contains("(500)")) return true;
+            if (webException.Message.ToLower().Contains("(504)")) return true;
+            if (webException.Message.ToLower().Contains("(408)")) return true;
+            if (webException.Message.ToLower().Contains("(503)")) return true;
             if (webException.Message.ToLower().Contains("aborted"))
             {
                 return true;
