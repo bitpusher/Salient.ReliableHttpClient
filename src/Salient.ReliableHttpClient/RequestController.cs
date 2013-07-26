@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Salient.ReflectiveLoggingAdapter;
@@ -51,7 +52,7 @@ namespace Salient.ReliableHttpClient
 
         private readonly object _lockTarget = new object();
 
-        
+
         private readonly List<RequestInfo> _requestCache;
         private readonly IRequestFactory _requestFactory;
         internal readonly Queue<RequestInfo> RequestQueue = new Queue<RequestInfo>();
@@ -72,15 +73,14 @@ namespace Salient.ReliableHttpClient
 
 
         private int _backgroundInterval = 50;
-        private int _maxPendingRequests = 4;
-        private int _throttleWindowCount = 15;
-        private TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(15);
+        private int _maxPendingRequests = 5;
+        private int _throttleWindowCount = 30;
+        private TimeSpan _throttleWindowTime = TimeSpan.FromSeconds(10);
 
 
         // #TODO: clean up ctors
 
         public RequestController(IJsonSerializer serializer, int backgroundInterval, int maxPendingRequests, int throttleWindowCount, TimeSpan throttleWindowTime)
-        
         {
             _throttleWindowTime = throttleWindowTime;
             _throttleWindowCount = throttleWindowCount;
@@ -249,6 +249,14 @@ namespace Salient.ReliableHttpClient
                                     // the only time an exception will come out of CompleteRequest is if the request wants to be retried
                                     request.AttemptedRetries++;
                                     request.Watch.Reset();
+
+                                    //#HACK: abstract this and the throttle code
+                                    if (ex.Message.ToLower().Contains("503"))
+                                    {
+                                        Thread.Sleep(1500);
+                                        Log.Warn("request throttled. waiting 1.5 seconds before retry");
+                                    }
+
                                     request.Watch.Start();
                                     Log.Warn(string.Format("retrying request {3} {0}\r\nattempt #{1}\r\nerror:{2} \r\nrequest:\r\n{4}",
                                         request.Id, request.AttemptedRetries, ex.Message, request.Index, request.ToString()));
