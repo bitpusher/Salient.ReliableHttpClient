@@ -7,6 +7,9 @@ namespace Salient.ReliableHttpClient
         bool ShouldRetry(WebException webException);
     }
     /// <summary>
+    /// #TODO: what happened to usage of this!?
+    /// 
+    /// 
     /// allow for retries on select exception types
     /// e.g. 50* server errors, timeouts and transport errors
     /// DO NOT RETRY THROTTLE, AUTHENTICATION OR ARGUMENT EXCEPTIONS ETC
